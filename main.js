@@ -6,19 +6,24 @@ const bgChange = lis => {
   }
 };
 
-
+// At first, input and outputs are hidden
 const wForm = document.querySelector('.w-form');
 const wOutputWrapper = document.getElementById('w-op-wrapper');
-const wInput = document.getElementById('weight-ip');
-const wSelect = document.querySelector('.w-select');
 wForm.style.visibility = "hidden";
 wOutputWrapper.style.visibility = 'hidden';
 
-wSelect.addEventListener('change', (e) => {
+const wInput = document.getElementById('weight-ip');
+const wSelectTag = document.querySelector('.w-select');
+const wOutputs = document.querySelectorAll('.w-op');
+
+// for bg change
+const wOpEachWrapper = document.querySelectorAll('.w-card');
+
+wSelectTag.addEventListener('change', (e) => {
   let wSelected = e.target.value;
   wInput.style.visibility = 'visible'
   // wInput.value = "";
-  document.querySelectorAll('.w-op').innerHTML = "";
+  wOutputs.innerHTML = "";
   const wList = ['kg', 'lb', 'oz']
   const wFilteredList = wList.filter(w => (w !== wSelected))
   // console.log(filteredList);
@@ -28,6 +33,8 @@ wSelect.addEventListener('change', (e) => {
     let wInputValue = e.target.value;
     wInputValue = Number(wInputValue)
     // console.log(typeof wInput);
+
+    // Make a convert calc lis depending on wSelected.
     let wConv;
     if (wSelected === 'kg') {
       wConv = [2.20462, 35.274]
@@ -38,7 +45,10 @@ wSelect.addEventListener('change', (e) => {
     };
     
     // console.log(wConv, wSelected);
-    const wOutputs = document.querySelectorAll('.w-op');
+
+    // Add classname to change each bg
+    bgChange(wOpEachWrapper);
+    // Actual output
     for (let i = 0; i < wOutputs.length; i++) {
       const element = wOutputs[i];
       const displayValue = wConv[i]*wInputValue
@@ -48,6 +58,7 @@ wSelect.addEventListener('change', (e) => {
 });
 
 // todo: temp
+// At first, input and outputs are hidden
 const tempForm = document.querySelector('.temp-form');
 const tempOpWrapper = document.querySelector('#temp-op-wrapper');
 tempForm.style.visibility = 'hidden';
@@ -55,12 +66,21 @@ tempOpWrapper.style.visibility = 'hidden';
 const tempSelect = document.querySelector('.temp-select');
 const tempInput = document.querySelector('#temp-ip');
 const tempOutputs = document.querySelector('.temp-op');
+
+// for bg change
+const tempOpEachWrapper = document.querySelectorAll('.temp-card');
+
 tempSelect.addEventListener('change', (e) => {
   let whichTemp = e.target.value;
   tempForm.style.visibility = 'visible';
   tempInput.addEventListener('input', (e) => {
     let tempInputValue = e.target.value;
     tempOpWrapper.style.visibility = 'visible';
+
+    // Add classname to change each bg
+    bgChange(tempOpEachWrapper);
+
+    // Actual outputs
     if (whichTemp === 'fa') {
       tempOutputs.innerHTML = `°C: ${((tempInputValue-32)*5/9).toFixed(1)}`;
     } else {
@@ -71,6 +91,7 @@ tempSelect.addEventListener('change', (e) => {
 
 
 // todo: speed
+// At first, input and outputs are hidden
 const speedForm = document.querySelector('.speed-form');
 const speedOpWrapper = document.querySelector('#speed-op-wrapper');
 speedForm.style.visibility = 'hidden';
@@ -78,12 +99,20 @@ speedOpWrapper.style.visibility = 'hidden';
 const speedSelect = document.querySelector('.speed-select');
 const speedInput = document.querySelector('#speed-ip');
 const speedOutputs = document.querySelector('.speed-op');
+// for bg change
+const speedOpEachWrapper = document.querySelectorAll('.speed-card');
+
 speedSelect.addEventListener('change', (e) => {
   let whichSpeed = e.target.value;
   speedForm.style.visibility = 'visible';
   speedInput.addEventListener('input', (e) => {
     let speedInputValue = e.target.value;
     speedOpWrapper.style.visibility = 'visible';
+
+    // Add classname to change each bg
+    bgChange(speedOpEachWrapper);
+
+    // Actual outputs
     if (whichSpeed === 'kph') {
       speedOutputs.innerHTML = `mph: ${(speedInputValue*.621).toFixed(1)}`;
     } else {
@@ -103,6 +132,7 @@ shoesOpWrapper.style.visibility = 'hidden';
 const shoesSelectTag = document.querySelector('#shoes-select');
 const shoesInputTag = document.querySelector('#shoes-ip');
 const shoesOutputs = document.querySelectorAll('.shoes-op');
+// for bg change
 const shoesOpEachWrapper = document.querySelectorAll('.shoes-card');
 const shoesList = ['US_Men', 'US_Women', 'UK', 'Euro', 'cm']
 shoesSelectTag.addEventListener('change', (e) => {
@@ -166,6 +196,81 @@ const timeInputTag = document.querySelector('#time-ip');
 const timeOutputs = document.querySelectorAll('.time-op');
 const timeOpEachWrapper = document.querySelectorAll('.time-card');
 const timeList = ['JP', 'US_PST', 'US_MST', 'US_CST', 'US_EST', 'UK']
+const summerTimeOnOff = document.getElementById('summerTimeOnOff');
+// Get today
+let checkSummerTime = false;
+let today = new Date();
+let todayMonth = today.getMonth() + 1;
+let todayHour = today.getHours();
+let originDate = today.getDate();
+// console.log(today, todayMonth);
+todayMonth = 3
+
+// During April to October => DST is on
+if (4 <= todayMonth && todayMonth <= 10) 
+{
+  checkSummerTime = true;
+} 
+// In March and Novenmer => if DST is on depends on date
+else if (todayMonth === 3 || todayMonth === 11) 
+{
+  let todayDate = today.getDate();
+
+  today.setDate(15);
+  today.setMonth(2);
+  // if it's in the third week in March or in the first week in Novemver, DST is on
+  if ((todayMonth === 3 && todayDate >= 15) || (todayMonth === 11 && todayDate <= 7)) {
+    checkSummerTime = true;
+    console.log('っ子通った', checkSummerTime);
+  }
+  // if it's in the second week, need to compare if today is after the second Sunday
+  else if (8 <= todayDate <= 14)
+  {
+    // // Set date to March 8 and get the day
+    // どうやって第二週日曜を取得するか、
+    // それ以降ならsummerTime on
+    let todayDay = today.getDay();
+    // 1. Get this week's Sunday date 2. if it's Sunday, subtract 7
+    sundayDate = 8 + (7-todayDay);
+    if (sundayDate === 15) sundayDate -= 7;
+    console.log(`today => ${today},\n todayMonth => ${todayMonth}, \n todayDay => ${todayDay},\n sundayDate => ${sundayDate}`);
+
+    if (todayMonth === 3) 
+    {
+      // if true, set DST to true
+      if (sundayDate < originDate) 
+      {
+        checkSummerTime = true;
+      } 
+      // if same, I need to check if it's after 2 a.m. and if true, set DST to true
+      else if (sundayDate === originDate) 
+      {
+        if (todayHour >= 2) 
+        {
+          checkSummerTime = true;
+        }
+      }
+    }
+    else if (todayMonth === 11)
+    {
+      // if true, set DST to true
+      if (sundayDate > originDate) 
+      {
+        checkSummerTime = true;
+      } 
+      // if same, I need to check if it's before 2 a.m. and if true, set DST to true
+      else if (sundayDate === originDate) 
+      {
+        if (todayHour <= 2) 
+        {
+          checkSummerTime = true;
+        }
+      }
+    }
+  }
+} 
+console.log('っ子通った', checkSummerTime);
+
 timeSelectTag.addEventListener('change', (e) => {
   // Have input visible  // get the option a user selected and delete it from timeList
   timeForm.style.visibility = 'visible';
@@ -182,9 +287,11 @@ timeSelectTag.addEventListener('change', (e) => {
     timeGetHour = Number(timeGetHour);
     console.log(timeInputValue, timeGetHour, timeGetMinute);
     timeOpWrapper.style.visibility = 'visible';
+
     const showTimeOutput = () => {
       for (let i = 0; i < timeOutputs.length; i++) {
         const element = timeOutputs[i];
+        console.log(timeOutputs);
         bgChange(timeOpEachWrapper);
         let timeCalcResult = timeGetHour+timeCalcList[i];
         if (timeCalcResult < 0) {
@@ -199,38 +306,56 @@ timeSelectTag.addEventListener('change', (e) => {
         console.log(element.innerHTML, timeOutputs.length);
       }
     }
+    
+    
+    const subtractOneHourFromJapanAndUkTime = () => 
+    {
+      if (checkSummerTime === true) {
+        timeCalcList[0] -= 1;
+        timeCalcList[4] -= 1;
+      }
+    }
     switch (timeSelected) {
       case 'JP':
         var timeCalcList = [-17, -16, -15, -14, -9]
+        if (checkSummerTime === true) timeCalcList = [-16, -15, -14. -13, -9];
         showTimeOutput();
         break;
       case 'US_PST':
         var timeCalcList = [17, 1, 2, 3, 8]
+        subtractOneHourFromJapanAndUkTime();
         showTimeOutput();
         break;
       case 'US_MST':
         var timeCalcList = [16, -1, 1, 2, 7]
+        subtractOneHourFromJapanAndUkTime();
         showTimeOutput();
         break;
       case 'US_CST':
         var timeCalcList = [15, -2, -1, 1, 6]
+        subtractOneHourFromJapanAndUkTime();
         showTimeOutput();
         break;
       case 'US_EST':
         var timeCalcList = [14, -3, -2, -1, 5]
+        subtractOneHourFromJapanAndUkTime();
         showTimeOutput();
         break;
       case 'UK':
         var timeCalcList = [9, -8, -7, -6, -5]
+        subtractOneHourFromJapanAndUkTime();
         showTimeOutput();
         break;
       default:
         break;
     }
+    if (checkSummerTime === true) summerTimeOnOff.innerHTML = 'DST is on.'
   });
 });
 
-// todo: weight refactoring, use bgChange and when it's summer time, change it
+
+// todo: weight refactoring => done on 12/14
+// todo: use bgChange and when it's summer time, change it => done on 12/15
 
 
 
