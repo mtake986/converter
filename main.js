@@ -28,7 +28,7 @@ wSelectTag.addEventListener('change', (e) => {
   const wFilteredList = wList.filter(w => (w !== wSelected))
   // console.log(filteredList);
 
-  wInput.addEventListener('input', function(e){
+  wInput.addEventListener('input', function (e) {
     wOutputWrapper.style.visibility = 'visible';
     let wInputValue = e.target.value;
     wInputValue = Number(wInputValue)
@@ -40,10 +40,10 @@ wSelectTag.addEventListener('change', (e) => {
       wConv = [2.20462, 35.274]
     } else if (wSelected === 'lb') {
       wConv = [.453592, 16]
-    } else{
+    } else {
       wConv = [0.0283495, 0.0625]
     };
-    
+
     // console.log(wConv, wSelected);
 
     // Add classname to change each bg
@@ -51,7 +51,7 @@ wSelectTag.addEventListener('change', (e) => {
     // Actual output
     for (let i = 0; i < wOutputs.length; i++) {
       const element = wOutputs[i];
-      const displayValue = wConv[i]*wInputValue
+      const displayValue = wConv[i] * wInputValue
       element.innerHTML = wFilteredList[i] + ': ' + displayValue.toFixed(2);
     }
   })
@@ -82,9 +82,9 @@ tempSelect.addEventListener('change', (e) => {
 
     // Actual outputs
     if (whichTemp === 'fa') {
-      tempOutputs.innerHTML = `°C: ${((tempInputValue-32)*5/9).toFixed(1)}`;
+      tempOutputs.innerHTML = `°C: ${((tempInputValue - 32) * 5 / 9).toFixed(1)}`;
     } else {
-      tempOutputs.innerHTML = `°F: ${(tempInputValue/5*9+32).toFixed(1)}`;
+      tempOutputs.innerHTML = `°F: ${(tempInputValue / 5 * 9 + 32).toFixed(1)}`;
     }
   });
 });
@@ -114,9 +114,9 @@ speedSelect.addEventListener('change', (e) => {
 
     // Actual outputs
     if (whichSpeed === 'kph') {
-      speedOutputs.innerHTML = `mph: ${(speedInputValue*.621).toFixed(1)}`;
+      speedOutputs.innerHTML = `mph: ${(speedInputValue * .621).toFixed(1)}`;
     } else {
-      speedOutputs.innerHTML = `kph: ${(speedInputValue*1.609).toFixed(1)}`;
+      speedOutputs.innerHTML = `kph: ${(speedInputValue * 1.609).toFixed(1)}`;
     }
   });
 });
@@ -149,13 +149,15 @@ shoesSelectTag.addEventListener('change', (e) => {
     shoesInputValue = Number(shoesInputValue)
     shoesOpWrapper.style.visibility = 'visible';
 
-    const showShoesOutput = function() {
+    const showShoesOutput = function () {
       for (let i = 0; i < shoesOutputs.length; i++) {
         const element = shoesOutputs[i];
         bgChange(shoesOpEachWrapper);
-        element.innerHTML = `${filteredShoesList[i]}: ${shoesInputValue+shoesCalcList[i]}`;
+        element.innerHTML = `${filteredShoesList[i]}: ${shoesInputValue + shoesCalcList[i]}`;
       }
     }
+
+
     switch (shoesSelected) {
       case 'US_Men':
         var shoesCalcList = [1.5, -0.5, 33, 18.5]
@@ -207,13 +209,11 @@ let originDate = today.getDate();
 todayMonth = 3
 
 // During April to October => DST is on
-if (4 <= todayMonth && todayMonth <= 10) 
-{
+if (4 <= todayMonth && todayMonth <= 10) {
   checkSummerTime = true;
-} 
+}
 // In March and Novenmer => if DST is on depends on date
-else if (todayMonth === 3 || todayMonth === 11) 
-{
+else if (todayMonth === 3 || todayMonth === 11) {
   let todayDate = today.getDate();
 
   today.setDate(15);
@@ -221,54 +221,45 @@ else if (todayMonth === 3 || todayMonth === 11)
   // if it's in the third week in March or in the first week in Novemver, DST is on
   if ((todayMonth === 3 && todayDate >= 15) || (todayMonth === 11 && todayDate <= 7)) {
     checkSummerTime = true;
-    console.log('っ子通った', checkSummerTime);
+    // console.log(checkSummerTime);
   }
   // if it's in the second week, need to compare if today is after the second Sunday
-  else if (8 <= todayDate <= 14)
-  {
+  else if (8 <= todayDate <= 14) {
     // // Set date to March 8 and get the day
     // どうやって第二週日曜を取得するか、
     // それ以降ならsummerTime on
     let todayDay = today.getDay();
     // 1. Get this week's Sunday date 2. if it's Sunday, subtract 7
-    sundayDate = 8 + (7-todayDay);
+    sundayDate = 8 + (7 - todayDay);
     if (sundayDate === 15) sundayDate -= 7;
     console.log(`today => ${today},\n todayMonth => ${todayMonth}, \n todayDay => ${todayDay},\n sundayDate => ${sundayDate}`);
 
-    if (todayMonth === 3) 
-    {
+    if (todayMonth === 3) {
       // if true, set DST to true
-      if (sundayDate < originDate) 
-      {
+      if (sundayDate < originDate) {
         checkSummerTime = true;
-      } 
+      }
       // if same, I need to check if it's after 2 a.m. and if true, set DST to true
-      else if (sundayDate === originDate) 
-      {
-        if (todayHour >= 2) 
-        {
+      else if (sundayDate === originDate) {
+        if (todayHour >= 2) {
           checkSummerTime = true;
         }
       }
     }
-    else if (todayMonth === 11)
-    {
+    else if (todayMonth === 11) {
       // if true, set DST to true
-      if (sundayDate > originDate) 
-      {
+      if (sundayDate > originDate) {
         checkSummerTime = true;
-      } 
+      }
       // if same, I need to check if it's before 2 a.m. and if true, set DST to true
-      else if (sundayDate === originDate) 
-      {
-        if (todayHour <= 2) 
-        {
+      else if (sundayDate === originDate) {
+        if (todayHour <= 2) {
           checkSummerTime = true;
         }
       }
     }
   }
-} 
+}
 console.log('っ子通った', checkSummerTime);
 
 timeSelectTag.addEventListener('change', (e) => {
@@ -293,7 +284,7 @@ timeSelectTag.addEventListener('change', (e) => {
         const element = timeOutputs[i];
         console.log(timeOutputs);
         bgChange(timeOpEachWrapper);
-        let timeCalcResult = timeGetHour+timeCalcList[i];
+        let timeCalcResult = timeGetHour + timeCalcList[i];
         if (timeCalcResult < 0) {
           timeCalcResult += 24;
           element.innerHTML = `${filteredTimeList[i]}: ${timeCalcResult}${timeGetMinute} -1d`;
@@ -306,10 +297,9 @@ timeSelectTag.addEventListener('change', (e) => {
         console.log(element.innerHTML, timeOutputs.length);
       }
     }
-    
-    
-    const subtractOneHourFromJapanAndUkTime = () => 
-    {
+
+
+    const subtractOneHourFromJapanAndUkTime = () => {
       if (checkSummerTime === true) {
         timeCalcList[0] -= 1;
         timeCalcList[4] -= 1;
@@ -318,7 +308,7 @@ timeSelectTag.addEventListener('change', (e) => {
     switch (timeSelected) {
       case 'JP':
         var timeCalcList = [-17, -16, -15, -14, -9]
-        if (checkSummerTime === true) timeCalcList = [-16, -15, -14. -13, -9];
+        if (checkSummerTime === true) timeCalcList = [-16, -15, -14. - 13, -9];
         showTimeOutput();
         break;
       case 'US_PST':
